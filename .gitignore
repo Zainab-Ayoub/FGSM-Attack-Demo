@@ -1,0 +1,37 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.python-version
+.env
+.env.*
+*.log
+
+# Virtual environments
+venv/
+.venv/
+
+# FastAPI / cache
+.cache/
+.mypy_cache/
+.pytest_cache/
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Build artifacts
+build/
+dist/
+
+# Images/large temp
+*.tmp
