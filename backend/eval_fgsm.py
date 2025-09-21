@@ -9,13 +9,20 @@ import torch
 from PIL import Image
 from torchvision import datasets, transforms
 
-from .fgsm import FGSMAttack
-from .model_utils import load_pretrained_model, pil_to_tensor_for_model, get_device, denormalize_to_display
+from .fgsm import Attack
+from .model_utils import (
+    load_pretrained_model,
+    pil_to_tensor_for_model,
+    get_device,
+    denormalize_to_display,
+    normalized_bounds_for_imagenet,
+)
 
 
 def evaluate_on_sample_images(image_paths: List[Path], epsilons: List[float]) -> None:
     device = get_device()
     model = load_pretrained_model().to(device).eval()
+    clamp_min, clamp_max = normalized_bounds_for_imagenet(device)
 
     out_csv = Path("backend/results_fgsm.csv")
     out_csv.parent.mkdir(parents=True, exist_ok=True)
@@ -28,7 +35,12 @@ def evaluate_on_sample_images(image_paths: List[Path], epsilons: List[float]) ->
             pil = Image.open(img_path).convert("RGB")
             x = pil_to_tensor_for_model(pil).to(device)
             for eps in epsilons:
-                attacker = FGSMAttack(model, epsilon=eps)
+                attacker = Attack(
+                    model,
+                    epsilon=eps,
+                    clamp_min=clamp_min,
+                    clamp_max=clamp_max,
+                )
                 result = attacker.run(x)
                 writer.writerow([str(img_path), eps, result.clean_pred, result.adv_pred, int(result.success)])
 

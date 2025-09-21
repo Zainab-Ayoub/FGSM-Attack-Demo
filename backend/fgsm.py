@@ -15,7 +15,7 @@ class AttackResult:
     success: bool
 
 
-class FGSMAttack:
+class Attack:
     """Fast Gradient Sign Method (FGSM) attack implementation.
 
     References:
@@ -34,7 +34,12 @@ class FGSMAttack:
         return int(torch.argmax(logits, dim=1).item())
 
     def run(self, image: torch.Tensor, label: torch.Tensor | None = None) -> AttackResult:
-        """Run FGSM attack on a single image tensor in range [0,1].
+        """Run FGSM attack on a single image tensor already in the model's input space.
+
+        Notes:
+            - The input is expected to be preprocessed (e.g., normalized) exactly as the model expects.
+            - Clamping is performed using `clamp_min`/`clamp_max`, which should match bounds in that
+              preprocessed space (e.g., ImageNet-normalized min/max), not raw [0,1] unless applicable.
 
         Args:
             image: Tensor of shape (1, C, H, W) with requires_grad False.

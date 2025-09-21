@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-import base64
-import io
+import base64 # to turn binary data into text and back
+import io # to treat bytes in memory as files
 from typing import Any, Dict
 
 from fastapi import FastAPI, File, UploadFile, Form
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware # to allow requests from different origins like frontend
 from fastapi.responses import JSONResponse
-from PIL import Image
-import torch
+from PIL import Image # to read the uploaded image and prep it for the model
+import torch # to do the math
 
-from .fgsm import FGSMAttack
+from .fgsm import Attack
+
 from .model_utils import (
     load_pretrained_model,
     pil_to_tensor_for_model,
@@ -48,7 +49,6 @@ def _tensor_to_b64_img(t: torch.Tensor) -> str:
     img.save(buf, format="PNG")
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
-
 @app.post("/attack")
 async def attack(image: UploadFile = File(...), epsilon: float = Form(0.1)) -> JSONResponse:
     data = await image.read()
@@ -60,7 +60,7 @@ async def attack(image: UploadFile = File(...), epsilon: float = Form(0.1)) -> J
     # Attack is done in normalized space but clamped back after sign step.
     # Clamp in normalized space to keep valid pixel range after denorm
     clamp_min, clamp_max = normalized_bounds_for_imagenet(DEVICE)
-    attacker = FGSMAttack(MODEL, epsilon=float(epsilon), clamp_min=clamp_min, clamp_max=clamp_max)
+    attacker = Attack(MODEL, epsilon=float(epsilon), clamp_min=clamp_min, clamp_max=clamp_max)
     result = attacker.run(x)
 
     # Convert images for display
@@ -87,5 +87,3 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
