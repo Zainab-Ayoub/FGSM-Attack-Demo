@@ -54,7 +54,6 @@ async def attack(image: UploadFile = File(...), epsilon: float = Form(0.1)) -> J
     data = await image.read()
     pil_img = Image.open(io.BytesIO(data)).convert("RGB")
 
-    # Preprocess to model input
     x = pil_to_tensor_for_model(pil_img).to(DEVICE)
 
     # Attack is done in normalized space but clamped back after sign step.

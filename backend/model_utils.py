@@ -75,5 +75,3 @@ def normalized_bounds_for_imagenet(device: torch.device) -> tuple[torch.Tensor, 
     min_t = (0.0 - mean) / std
     max_t = (1.0 - mean) / std
     return min_t, max_t
-
-

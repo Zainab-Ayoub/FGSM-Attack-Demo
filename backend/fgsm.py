@@ -16,11 +16,6 @@ class AttackResult:
 
 
 class Attack:
-    """Fast Gradient Sign Method (FGSM) attack implementation.
-
-    References:
-      - Goodfellow et al. (2015): Explaining and Harnessing Adversarial Examples
-    """
 
     def __init__(self, model: nn.Module, epsilon: float = 0.1, clamp_min: float | torch.Tensor = 0.0, clamp_max: float | torch.Tensor = 1.0):
         self.model = model
@@ -79,5 +74,3 @@ class Attack:
         success = adv_pred != clean_pred
 
         return AttackResult(adversarial_image=adv_image.detach(), clean_pred=clean_pred, adv_pred=adv_pred, success=success)
-
-

@@ -59,5 +59,3 @@ if __name__ == "__main__":
     epsilons = [0.0, 0.01, 0.05, 0.1, 0.2]
     evaluate_on_sample_images(paths, epsilons)
     print("Saved results to backend/results_fgsm.csv")
-
-
