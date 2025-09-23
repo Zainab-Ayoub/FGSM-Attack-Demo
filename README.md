@@ -88,11 +88,11 @@ Takeaways:
 The raw results used for this summary are in `backend/results_fgsm.csv`.
 
 ### Screenshots
-- Backend running (Uvicorn): `screenshots/backendScreenshots/runningBackend.png`
-- Swagger successful /attack call (200 OK): `screenshots/backendScreenshots/attack.png`
-- Frontend running (Next.js): `screenshots/frontend/runningFrontend.png`
-- Example adversarial image: `screenshots/frontend/adv.png`
-- Evaluation overview: `screenshots/evaluation/evaluation.png`
+- Backend running (Uvicorn): screenshots/backendScreenshots/runningBackend.png
+- Swagger successful /attack call (200 OK): screenshots/backendScreenshots/attack.png
+- Frontend running (Next.js): screenshots/frontend/runningFrontend.png
+- Example adversarial image: screenshots/frontend/adv.png
+- Evaluation overview: screenshots/evaluation/evaluation.png
 
 ### Deployment (AWS)
 - Backend (recommended): EC2 t2.micro with Uvicorn + Nginx
