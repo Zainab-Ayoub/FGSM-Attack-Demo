@@ -100,6 +100,31 @@ The raw results used for this summary are in `backend/results_fgsm.csv`.
 Chosen option and why:
 - EC2 t2.micro: simpler for PyTorch + torchvision (large dependencies), predictable cold starts and packaging compared to Lambda.
 
+If AWS is unavailable today, use Render Free Tier (half credit per brief):
+
+#### Temporary fallback: Deploy backend on Render (Free)
+1) Push this repo to GitHub.
+2) Create `render.yaml` at repo root with:
+```
+services:
+  - type: web
+    name: fgsm-backend
+    runtime: python
+    plan: free
+    region: oregon
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app_fgsm:app --host 0.0.0.0 --port $PORT
+```
+3) In Render → New + → Blueprint → connect the repo → deploy.
+4) Note the backend URL; set `NEXT_PUBLIC_API_URL` to this in Amplify/locally.
+
+Frontend on Render (optional if not using Amplify):
+1) New Static Site → connect repo `frontend/` → set build command `npm install && npm run build` and publish directory `.next`.
+2) Set env var `NEXT_PUBLIC_API_URL` to the backend URL.
+
 #### Backend on EC2 (t2.micro)
 1) Launch EC2 (Amazon Linux 2023), open inbound 80 (HTTP) and 22 (SSH). Optionally 8000 for direct testing.
 2) SSH into the instance:
@@ -112,7 +137,7 @@ sudo dnf update -y
 sudo dnf install -y python3.11 python3.11-pip git nginx
 python3.11 -m venv venv
 source venv/bin/activate
-git clone <your_repo_url> app && cd app
+git clone https://github.com/Zainab-Ayoub/FGSM-Attack-Demo && cd FGSM-Attack-Demo
 pip install -r backend/requirements.txt
 ```
 4) Test run:
