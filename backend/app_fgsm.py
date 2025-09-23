@@ -4,7 +4,7 @@ import base64 # to turn binary data into text and back
 import io # to treat bytes in memory as files
 from typing import Any, Dict
 
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware # to allow requests from different origins like frontend
 from fastapi.responses import JSONResponse
 from PIL import Image # to read the uploaded image and prep it for the model
@@ -26,8 +26,13 @@ app = FastAPI(title="FGSM Attack API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost",
+        "http://127.0.0.1",
+    ],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -51,8 +56,15 @@ def _tensor_to_b64_img(t: torch.Tensor) -> str:
 
 @app.post("/attack")
 async def attack(image: UploadFile = File(...), epsilon: float = Form(0.1)) -> JSONResponse:
+    # Basic content-type guard
+    if image.content_type not in {"image/png", "image/jpeg"}:
+        raise HTTPException(status_code=415, detail="Unsupported file type. Please upload PNG or JPEG.")
+
     data = await image.read()
-    pil_img = Image.open(io.BytesIO(data)).convert("RGB")
+    try:
+        pil_img = Image.open(io.BytesIO(data)).convert("RGB")
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="Invalid image file. Please upload a valid PNG or JPEG.") from exc
 
     x = pil_to_tensor_for_model(pil_img).to(DEVICE)
 

@@ -64,13 +64,41 @@ python backend/eval_fgsm.py
 ```
 This writes `backend/results_fgsm.csv` with columns: `image, epsilon, clean_pred, adv_pred, success`.
 
-Observations to report (fill in after running):
-- How did predictions change between clean and adversarial images?
-- Did increasing ε make attacks stronger (higher success rate, larger accuracy drop)?
+From the included run on two images (`samples/flower.jpg`, `samples/tennis.jpg`):
+- Success rate vs ε (success = adversarial prediction differs from clean):
+
+  | ε | success / 2 |
+  |---|-------------|
+  | 0.00 | 0/2 |
+  | 0.01 | 1/2 |
+  | 0.05 | 2/2 |
+  | 0.10 | 2/2 |
+  | 0.20 | 2/2 |
+
+- Per‑image changes:
+  - `flower.jpg`: 738 → 984 (ε=0.01/0.05), then 738 → 985 (ε≥0.1).
+  - `tennis.jpg`: 852 → 752 starting at ε=0.05 (no change at ε=0.01).
+
+Takeaways:
+- Increasing ε strengthened the attack: no successes at ε=0.00, partial at ε=0.01, and consistent at ε≥0.05 for both images.
+- Different images have different sensitivity: `flower.jpg` flips at ε=0.01, `tennis.jpg` needs ε≥0.05.
+- Visual changes remain small at ε≈0.05–0.10 but are typically sufficient to alter the prediction.
+
+The raw results used for this summary are in `backend/results_fgsm.csv`.
+
+### Screenshots
+- Backend running (Uvicorn): `screenshots/backendScreenshots/runningBackend.png`
+- Swagger successful /attack call (200 OK): `screenshots/backendScreenshots/attack.png`
+- Frontend running (Next.js): `screenshots/frontend/runningFrontend.png`
+- Example adversarial image: `screenshots/frontend/adv.png`
+- Evaluation overview: `screenshots/evaluation/evaluation.png`
 
 ### Deployment (AWS)
 - Backend (recommended): EC2 t2.micro with Uvicorn + Nginx
 - Frontend: Amplify Hosting
+
+Chosen option and why:
+- EC2 t2.micro: simpler for PyTorch + torchvision (large dependencies), predictable cold starts and packaging compared to Lambda.
 
 #### Backend on EC2 (t2.micro)
 1) Launch EC2 (Amazon Linux 2023), open inbound 80 (HTTP) and 22 (SSH). Optionally 8000 for direct testing.
@@ -140,3 +168,4 @@ sudo systemctl enable --now fgsm
 
 References
 - PyTorch FGSM tutorial: https://docs.pytorch.org/tutorials/beginner/fgsm_tutorial.html
+- Goodfellow et al., "Explaining and Harnessing Adversarial Examples": https://arxiv.org/abs/1412.6572
