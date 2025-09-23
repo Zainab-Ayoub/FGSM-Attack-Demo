@@ -59,11 +59,6 @@ npm run dev
 Fast Gradient Sign Method perturbs an input in the direction that maximally increases the model's loss, using the sign of the gradient with respect to the input. Given an input x and label y, and loss L(θ, x, y), FGSM forms `x_adv = x + ε * sign(∇_x L(θ, x, y))`. With small ε, the image looks visually unchanged to humans, yet can cause misclassification. Increasing ε typically increases attack success but can introduce visible artifacts.
 
 ### Evaluation and Observations
-Run the evaluation script on a few sample images to record attack success across epsilons:
-```
-python backend/eval_fgsm.py
-```
-This writes `backend/results_fgsm.csv` with columns: `image, epsilon, clean_pred, adv_pred, success`.
 
 From the included run on two images (`samples/flower.jpg`, `samples/tennis.jpg`):
 - Success rate vs ε (success = adversarial prediction differs from clean):
