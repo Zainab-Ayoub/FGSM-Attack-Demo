@@ -29,27 +29,11 @@ class Attack:
         return int(torch.argmax(logits, dim=1).item())
 
     def run(self, image: torch.Tensor, label: torch.Tensor | None = None) -> AttackResult:
-        """Run FGSM attack on a single image tensor already in the model's input space.
-
-        Notes:
-            - The input is expected to be preprocessed (e.g., normalized) exactly as the model expects.
-            - Clamping is performed using `clamp_min`/`clamp_max`, which should match bounds in that
-              preprocessed space (e.g., ImageNet-normalized min/max), not raw [0,1] unless applicable.
-
-        Args:
-            image: Tensor of shape (1, C, H, W) with requires_grad False.
-            label: Optional ground-truth label tensor of shape (1,), if None uses clean prediction.
-
-        Returns:
-            AttackResult with adversarial image and predictions.
-        """
-
         if image.ndim != 4 or image.size(0) != 1:
             raise ValueError("Expected image of shape (1, C, H, W)")
 
         image = image.clone().detach().requires_grad_(True)
 
-        # Forward pass on clean image
         logits = self.model(image)
         clean_pred = self.predict_label(logits)
 
@@ -62,7 +46,6 @@ class Attack:
         self.model.zero_grad(set_to_none=True)
         loss.backward()
 
-        # FGSM: x_adv = x + eps * sign(grad_x)
         grad_sign = image.grad.detach().sign()
         adv_image = image.detach() + self.epsilon * grad_sign
         adv_image = torch.clamp(adv_image, self.clamp_min, self.clamp_max)

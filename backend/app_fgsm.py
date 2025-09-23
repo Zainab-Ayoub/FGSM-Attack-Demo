@@ -26,12 +26,7 @@ app = FastAPI(title="FGSM Attack API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost",
-        "http://127.0.0.1",
-    ],
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -56,7 +51,6 @@ def _tensor_to_b64_img(t: torch.Tensor) -> str:
 
 @app.post("/attack")
 async def attack(image: UploadFile = File(...), epsilon: float = Form(0.1)) -> JSONResponse:
-    # Basic content-type guard
     if image.content_type not in {"image/png", "image/jpeg"}:
         raise HTTPException(status_code=415, detail="Unsupported file type. Please upload PNG or JPEG.")
 
@@ -68,14 +62,10 @@ async def attack(image: UploadFile = File(...), epsilon: float = Form(0.1)) -> J
 
     x = pil_to_tensor_for_model(pil_img).to(DEVICE)
 
-    # Attack is done in normalized space but clamped back after sign step.
-    # Clamp in normalized space to keep valid pixel range after denorm
     clamp_min, clamp_max = normalized_bounds_for_imagenet(DEVICE)
     attacker = Attack(MODEL, epsilon=float(epsilon), clamp_min=clamp_min, clamp_max=clamp_max)
     result = attacker.run(x)
 
-    # Convert images for display
-    # Clean display
     clean_disp = denormalize_to_display(x)
     adv_disp = denormalize_to_display(result.adversarial_image)
     adv_b64 = _tensor_to_b64_img(adv_disp)

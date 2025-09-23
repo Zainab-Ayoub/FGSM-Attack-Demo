@@ -42,7 +42,6 @@ def evaluate_on_sample_images(image_paths: List[Path], epsilons: List[float]) ->
 
 
 if __name__ == "__main__":
-    # Example: evaluate a few local sample images if present
     samples_dir = Path("samples")
     paths = []
     if samples_dir.exists():
