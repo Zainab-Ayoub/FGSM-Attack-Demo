@@ -13,5 +13,10 @@ npm install
 npm run dev
 ```
 
+When deploying as a Static Site (Render):
+- Build Command: `npm ci --include=dev && npm run build`
+- Publish Directory: `out`
+- Env var: `NEXT_PUBLIC_API_URL=https://fgsmbackend.onrender.com`
+
 
 

@@ -3,7 +3,7 @@ This repository contains a minimal FastAPI backend implementing the FGSM adversa
 ### Deployed URLs (fill in after deploy)
 - Backend API: https://fgsmbackend.onrender.com
 - API Docs: https://fgsmbackend.onrender.com/docs#/
-- Frontend App: <FRONTEND_URL>
+- Frontend App: https://fgsmfrontend-serb.onrender.com/
 
 ### Prerequisites
 - Python 3.10+ (recommended)
@@ -31,7 +31,7 @@ curl -X POST "http://localhost:8000/attack" \
 - Endpoint: `POST /attack`
 - Request (multipart/form-data):
   - `image`: PNG/JPEG file (required)
-  - `epsilon`: float, default 0.1 (optional)
+  - `epsilon`: float, default 0.1 
 - Response (JSON):
   - `clean_prediction`: int label index
   - `adversarial_prediction`: int label index
@@ -88,75 +88,32 @@ Takeaways:
 The raw results used for this summary are in `backend/results_fgsm.csv`.
 
 ### Screenshots
-- Backend running (Uvicorn): screenshots/backendScreenshots/runningBackend.png
-- Swagger successful /attack call (200 OK): screenshots/backendScreenshots/attack.png
-- Frontend running (Next.js): screenshots/frontend/runningFrontend.png
-- Example adversarial image: screenshots/frontend/adv.png
-- Evaluation overview: screenshots/evaluation/evaluation.png
+Backend
+![Backend running](screenshots/backendScreenshots/runningBackend.png)
+![Swagger /attack 200 OK](screenshots/backendScreenshots/attack.png)
 
-### Deployment (AWS)
-- Backend (recommended): EC2 t2.micro with Uvicorn + Nginx
-- Frontend: Amplify Hosting
+Frontend
+![Frontend running](screenshots/frontend/runningFrontend.png)
+![Adversarial example](screenshots/frontend/adv.png)
 
-3) Install dependencies:
-```
-sudo dnf update -y
-sudo dnf install -y python3.11 python3.11-pip git nginx
-python3.11 -m venv venv
-source venv/bin/activate
-git clone https://github.com/Zainab-Ayoub/FGSM-Attack-Demo && cd FGSM-Attack-Demo
-pip install -r backend/requirements.txt
-```
-4) Test run:
-```
-python -m uvicorn backend.app_fgsm:app --host 0.0.0.0 --port 8000
-```
-5) Nginx reverse proxy to Uvicorn (serve on port 80):
-```
-sudo tee /etc/nginx/conf.d/fgsm.conf >/dev/null <<'NGINX'
-server {
-    listen 80;
-    server_name _;
-    location / {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-NGINX
-sudo nginx -t && sudo systemctl restart nginx
-```
-6) Run as a service (optional):
-```
-sudo tee /etc/systemd/system/fgsm.service >/dev/null <<'UNIT'
-[Unit]
-Description=FGSM FastAPI Service
-After=network.target
+Evaluation
+![Evaluation CSV](screenshots/evaluation/evaluation.png)
 
-[Service]
-User=ec2-user
-WorkingDirectory=/home/ec2-user/app
-Environment="PATH=/home/ec2-user/venv/bin"
-ExecStart=/home/ec2-user/venv/bin/uvicorn backend.app_fgsm:app --host 127.0.0.1 --port 8000
-Restart=always
+### Deployment (Render)
+Backend (Web Service)
+- Build Command: `pip install -r backend/requirements.txt`
+- Start Command: `uvicorn backend.app_fgsm:app --host 0.0.0.0 --port $PORT`
+- Env vars: `PYTHON_VERSION=3.11.9`
 
-[Install]
-WantedBy=multi-user.target
-UNIT
-sudo systemctl daemon-reload
-sudo systemctl enable --now fgsm
-```
-7) Note the public backend URL: `http://EC2_PUBLIC_DNS/`.
+Frontend (Static Site)
+- Root Directory: `frontend`
+- Build Command: `npm ci --include=dev && npm run build`
+- Publish Directory: `out`
+- Env vars: `NEXT_PUBLIC_API_URL=https://fgsmbackend.onrender.com`, `NODE_VERSION=18.18.2`
 
-#### Frontend on Amplify Hosting
-1) Push this repo to GitHub.
-2) In AWS Amplify → Hosting → New app → Connect GitHub → select repo/branch.
-3) Set environment variable: `NEXT_PUBLIC_API_URL` = your backend URL (e.g., `http://EC2_PUBLIC_DNS`).
-4) Accept default Next.js build settings and deploy.
-5) Copy the Amplify URL to include in Deliverables.
-
+Notes
+- If the backend idles, the first request may be slow; retry once.
+- CORS is restricted to the frontend Render URL and localhost in `backend/app_fgsm.py`.
 
 References
 - PyTorch FGSM tutorial: https://docs.pytorch.org/tutorials/beginner/fgsm_tutorial.html
