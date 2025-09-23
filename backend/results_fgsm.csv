@@ -1,0 +1,11 @@
+image,epsilon,clean_pred,adv_pred,success
+samples\flower.jpg,0.0,738,738,0
+samples\flower.jpg,0.01,738,984,1
+samples\flower.jpg,0.05,738,984,1
+samples\flower.jpg,0.1,738,985,1
+samples\flower.jpg,0.2,738,985,1
+samples\tennis.jpg,0.0,852,852,0
+samples\tennis.jpg,0.01,852,852,0
+samples\tennis.jpg,0.05,852,752,1
+samples\tennis.jpg,0.1,852,752,1
+samples\tennis.jpg,0.2,852,752,1

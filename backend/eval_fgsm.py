@@ -1,20 +1,16 @@
 from __future__ import annotations
 
 import csv
-import io
 from pathlib import Path
 from typing import List, Tuple
 
-import torch
 from PIL import Image
-from torchvision import datasets, transforms
 
 from .fgsm import Attack
 from .model_utils import (
     load_pretrained_model,
     pil_to_tensor_for_model,
     get_device,
-    denormalize_to_display,
     normalized_bounds_for_imagenet,
 )
 
