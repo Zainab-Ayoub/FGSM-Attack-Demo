@@ -2,8 +2,8 @@ This repository contains a minimal FastAPI backend implementing the FGSM adversa
 
 ### Deployed URLs
 - Backend API: https://fgsm-attack-backend-o5gb.onrender.com
-- API Docs: https://fgsm-attack-backend-o5gb.onrender.com/docs#/
-- Frontend App: https://fgsmfrontend-serb.onrender.com/
+- API Docs: https://fgsm-attack-backend-o5gb.onrender.com/docs
+- Frontend App: https://fgsm-attack-frontend-nu21.onrender.com/
 
 ### Prerequisites
 - Python 3.10+ (recommended)
