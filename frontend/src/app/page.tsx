@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 
 // Default to deployed backend if env var isn't set (helps Render static deploys)
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fgsmbackend.onrender.com';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fgsm-attack-backend.onrender.com';
 
 export default function Page() {
   const [file, setFile] = useState<File | null>(null);

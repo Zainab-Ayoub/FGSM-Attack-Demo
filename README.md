@@ -1,8 +1,8 @@
 This repository contains a minimal FastAPI backend implementing the FGSM adversarial attack using PyTorch and a Next.js frontend to demo the attack on uploaded images.
 
-### Deployed URLs (fill in after deploy)
-- Backend API: https://fgsmbackend.onrender.com
-- API Docs: https://fgsmbackend.onrender.com/docs#/
+### Deployed URLs
+- Backend API: https://fgsm-attack-backend.onrender.com
+- API Docs: https://fgsm-attack-backend.onrender.com/docs#/
 - Frontend App: https://fgsmfrontend-serb.onrender.com/
 
 ### Prerequisites
@@ -104,7 +104,7 @@ Frontend (Static Site)
 - Root Directory: `frontend`
 - Build Command: `npm ci --include=dev && npm run build`
 - Publish Directory: `out`
-- Env vars: `NEXT_PUBLIC_API_URL=https://fgsmbackend.onrender.com`, `NODE_VERSION=18.18.2`
+- Env vars: `NEXT_PUBLIC_API_URL=https://fgsm-attack-backend.onrender.com`, `NODE_VERSION=18.18.2`
 
 Notes
 - If the backend idles, the first request may be slow; retry once.
