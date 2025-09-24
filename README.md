@@ -20,6 +20,7 @@ pip install -r backend/requirements.txt
 python -m uvicorn backend.app_fgsm:app --reload --host 127.0.0.1 --port 8000
 ```
 Then open http://localhost:8000/docs
+
 4. Test with curl:
 ```
 curl -X POST "http://localhost:8000/attack" \
